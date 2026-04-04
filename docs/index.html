@@ -3,8 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title>Voltage Tracking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
-<h2>Register tg channel</h2>
+<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top ">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">⚡️Voltage Tracking</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Додому</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#esphome-connect">Esp home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#ha-connect">Home Assistant</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <br><br>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Увага!</strong> Наразі реєстрація каналів відбувається лише раз на годину, тому повідомлення від боту прийде з великою затримкою
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <br><br><br>
+    <h2 id="ha-connect">Підключення до Home Assistant</h2>
+    <p>В configuration.yml свторити rest інтеграцію</p>
+    <pre>
+rest_command:
+  track_voltage:
+    url: "https://metrics_voltagetracking.frick.net.ua/api/v1/push/influx/write"
+    method: POST
+    verify_ssl: false
+    headers:
+      Authorization: "Basic MzA3Nzg2NDpnbGNfZXlKdklqb2lNVGN4TlRVME55SXNJbklrSXdjaemRKYTJQnliMlF0WlhVdGQyVnpkQzB5SW4xOQ=="
+      Content-Type: "text/plain"
+    payload: 'voltage,key=3llVAaaAAaaAAaaaET82TA,phase=1 value={{ states("sensor.energysource_voltage") | float }}'
+</pre>
+    <ul>
+        <li>key - ключ отриманий від бота <a href="https://t.me/voltage_tracking_bot">t.me/VoltageTrackingBot</a></li>
+        <li>Autorization заголовок - отриманий у <a href="https://t.me/frickua">t.me/frickua</a></li>
+    </ul>
+    <p>Налаштування автоматизаціі:</p>
+    <ul>
+        <li>Інтервал - не більше 1 разу на хвилину, можна налаштувати статистику, раз на 5-10хв і вдправляти середнє
+        </li>
+        <li>Додатково можна налаштувати відправку при виході значення за межі 200-250, що б як найшвидше побачити
+            сповіщення
+            <ul>
+                <li>Додати тригер на зміну стану</li>
+                <li>Та додаткову умову як в прикладі:</li>
+            </ul>
+        </li>
+
+    </ul>
+    <pre>
+      {% set v = states('sensor.energysource_voltage') %}
+      {% if v in [None, 'unknown', 'unavailable'] %}
+        false
+      {% elif trigger.platform == 'time_pattern' %}
+        true
+      {% elif trigger.platform == 'state' %}
+        {% if trigger.from_state is none or trigger.to_state is none %}
+          false
+        {% else %}
+          {% set from = trigger.from_state.state | float(0) %}
+          {% set to = trigger.to_state.state | float(0) %}
+          {{ (from < 250 and to > 250) or (from > 200 and to < 200) }}
+        {% endif %}
+      {% else %}
+        false
+      {% endif %}
+</pre>
+    <img src="images/ha-automation.png" class="rounded img-fluid" alt="ha automation" style="max-width: 30vw;">x
+    <br>
+    <br>
+    <br>
+    <h2 id="esphome-connect">Підключення до ESP Home</h2>
+    <pre>
+interval:
+  - interval: 1min
+    then:
+      - http_request.post:
+          url: "https://metrics_voltagetracking.frick.net.ua/api/v1/push/influx/write"
+          request_headers:
+            Authorization: "Basic MzA3Nzg2NDpnbGNTJGbE9UTlZSSFZrWWlJc0ltMGlPbnNpY2lJNkluQnliMlF0WlhVdGQyVnpkQzB5SW4xOQ=="
+          body: !lambda |-
+            return (String("voltage,key=3llVAaaAAaaAAaaaET82TA,phase=1  value=" + String(id(voltage_sensor).state)).c_str();
+</pre>
+</div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </html>
