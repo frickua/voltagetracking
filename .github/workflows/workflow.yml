@@ -28,28 +28,28 @@ jobs:
 
       - name: Run Channel Registration script
         run: python channel-registration/channel-registration.py
-    process-chart-updates:
-      runs-on: ubuntu-latest
-      env:
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-        TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
-        GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
-        GRAFANA_TOKEN: ${{ secrets.GRAFANA_TOKEN }}
-        TZ: "Europe/Kyiv"
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v3
+  process-chart-updates:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+      GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+      GRAFANA_TOKEN: ${{ secrets.GRAFANA_TOKEN }}
+      TZ: "Europe/Kyiv"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-        - name: Set up Python
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.14'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            if [ -f charts-processing/requirements.txt ]; then pip install -r charts-processing/requirements.txt; fi
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f charts-processing/requirements.txt ]; then pip install -r charts-processing/requirements.txt; fi
 
-        - name: Run Chart processing script
-          run: python charts-processing/charts-processing.py
+      - name: Run Chart processing script
+        run: python charts-processing/charts-processing.py
