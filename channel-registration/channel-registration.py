@@ -43,7 +43,7 @@ def send_welcome_msg(chat_id, auth_key):
                 "Цей проєкт дозволить тобі та твоїм сусідам, слідкувати за рівнем напруги у вашій оселі, та попередити аварійні ситуації.\n\n"
                 f"Твій унікальний ключ для надсилання даних: {auth_key}\n"
                 f"Тепер ти можеш надсилати дані своєї напруги в ситему\n\n"
-                f"Для цього використовуй HTTP POST запит https://metrics.voltagetracking.frick.net.ua/api/v1/push/influx/write\n"
+                f"Для цього використовуй HTTP POST запит https://metrics_voltagetracking.frick.net.ua/api/v1/push/influx/write\n"
                 "Обов'язково додай заголовок, для авторизаціі"
                 "<pre>Authorization: Basic {TOKEN}</pre>"
                 f"Тіло запиту(body):"

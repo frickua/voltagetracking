@@ -84,7 +84,7 @@ for row in response.data:
     print(row)
     key = row['auth_key'];
     generate_channel_chart(key)
-    caption = f"📊 Статистика напруги. Оновлено: {datetime.now().strftime('%H:%M')} (Дата: {date.today()})"
+    caption = f"📊 Статистика напруги. Оновлено: {datetime.now().strftime('%H:%M')} (Дата: {date.today()})\nЗгенеровано: @voltage_tracking_bot"
     msg_updated = parse_db_timestamp(row['chart_msg_updated'])
     if row['chart_msg_id'] and msg_updated and msg_updated.date() == date.today():
         update_chart_tg(row['chart_msg_id'], row['chat_id'], key, caption)
