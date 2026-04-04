@@ -96,5 +96,7 @@ for row in response.data:
             pin_tg_msg(row['chat_id'], row['chart_msg_id'], True)
         pin_tg_msg(row['chat_id'], msg_id)
 
-supabase.table("tg_channels").upsert(db_updates, on_conflict="id").execute()
+print(db_updates)
+resp = supabase.table("tg_channels").upsert(db_updates, on_conflict="id").execute()
+print(resp.model_dump_json())
 
