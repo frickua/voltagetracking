@@ -1,0 +1,43 @@
+name: Main workflow
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+jobs:
+  register-new-channels:
+    #TODO: prepare own docker image to speedup startup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f channel-registration/requirements.txt ]; then pip install -r channel-registration/requirements.txt; fi
+
+      - name: Run Channel Registration script
+        run: python channel-registration/channel-registration.py
+    process-chart-updates:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.14'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            if [ -f charts-processing/requirements.txt ]; then pip install -r charts-processing/requirements.txt; fi
+
+        - name: Run Chart processing script
+          run: python charts-processing/charts-processing.py
