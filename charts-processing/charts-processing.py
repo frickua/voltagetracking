@@ -10,6 +10,7 @@ SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 BOT_TOKEN = os.getenv('TG_BOT_TOKEN')
 GRAFANA_TOKEN = os.getenv('GRAFANA_TOKEN')
+GRAFANA_URL = os.getenv('GRAFANA_URL')
 TZ: "Europe/Kyiv" #TODO: move to env variables
 def parse_db_timestamp(db):
     if not db:
@@ -23,11 +24,7 @@ def local_midnight():
 
 def generate_channel_chart(key):
 
-    grafana_url = (
-        "https://voltagetracking.grafana.net/render/d-solo/vogh9ws/voltage"
-        f"?orgId=1&from={local_midnight()}&to=now&panelId=1&tz=Europe%2FKyiv&var-key={key}&var-phase=$__all"
-    )
-
+    grafana_url = GRAFANA_URL.format(key=key, local_midnight=local_midnight())
     headers = {
         "Authorization": f"Bearer {GRAFANA_TOKEN}"
     }
