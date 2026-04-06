@@ -20,7 +20,7 @@ TZ: "Europe/Kyiv"
 
 with open(EVENT_PATH) as f:
     print('########################')
-    print(f)
+    print(f.read())
     print('########################')
     payload = json.load(f)
 
