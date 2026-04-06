@@ -34,7 +34,7 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f py-scripts/alerts/requirements.txt ]; then pip install -r py-scripts/alerts/requirements.txt; fi
 
-      - name: Run Chart processing script
+      - name: Run Alerts script
         run: python py-scripts/alerts/alerts.py
 
 

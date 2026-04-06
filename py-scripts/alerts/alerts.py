@@ -19,13 +19,16 @@ TZ: "Europe/Kyiv"
 ###############################################################
 
 with open(EVENT_PATH) as f:
+    print('########################')
+    print(f)
+    print('########################')
     payload = json.load(f)
 
-print(payload)
+print(payload['client_payload'])
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-response = supabase.table("alerts_fingerprints").select('fingerprint').execute()
+response = supabase.table("alerts-fingerprints").select('fingerprint').execute()
 
 fingerprints = {row["fingerprint"] for row in response.data}
 
