@@ -13,24 +13,28 @@ jobs:
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
       GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
       GRAFANA_TOKEN: ${{ secrets.GRAFANA_TOKEN }}
+      EVENT_PAYLOAD: $GITHUB_EVENT_PATH
       TZ: "Europe/Kyiv"
     steps:
       - name: Debug output
         run: |
+            echo $GITHUB_EVENT_PATH
             echo '${{ toJson(github.event.client_payload) }}'
-#      - name: Checkout repository
-#        uses: actions/checkout@v6.0.2
-#
-#      - name: Set up Python
-#        uses: actions/setup-python@v6.2.0
-#        with:
-#          python-version: '3.14'
-#
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          if [ -f py-scripts/alerts/requirements.txt ]; then pip install -r alerts/requirements.txt; fi
-#
-#      - name: Run Chart processing script
-#        run: python py-scripts/alerts/alerts.py
+
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f py-scripts/alerts/requirements.txt ]; then pip install -r alerts/requirements.txt; fi
+
+      - name: Run Chart processing script
+        run: python py-scripts/alerts/alerts.py
+
 
