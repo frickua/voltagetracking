@@ -23,7 +23,8 @@ def local_midnight():
 
 
 def generate_channel_chart(key):
-
+    if os.path.exists(f"{key}.png"):
+        print("Skip chart generating, already exist. Possible, multiple groups processing")
     grafana_url = GRAFANA_URL.format(key=key, local_midnight=local_midnight())
     headers = {
         "Authorization": f"Bearer {GRAFANA_TOKEN}"

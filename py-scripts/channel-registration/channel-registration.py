@@ -37,19 +37,23 @@ def send_tg_msg(chat_id, txt, parse_mode='TEXT'):
     response = requests.post(url, data=payload)
     print(response.json())
 
-def send_welcome_msg(chat_id, auth_key):
-    send_tg_msg(chat_id,
-"👋 Привіт! Дякую, за цікавість до проєкту моніторингу напруги в енергосистемі.\n "
-                "Цей проєкт дозволить тобі та твоїм сусідам, слідкувати за рівнем напруги у вашій оселі, та попередити аварійні ситуації.\n\n"
-                f"Твій унікальний ключ для надсилання даних: {auth_key}\n"
-                f"Тепер ти можеш надсилати дані своєї напруги в ситему\n\n"
-                f"Для цього використовуй HTTP POST запит https://metrics_voltagetracking.frick.net.ua/api/v1/push/influx/write\n"
-                "Обов'язково додай заголовок, для авторизаціі"
-                "<pre>Authorization: Basic {TOKEN}</pre>"
-                f"Тіло запиту(body):"
-                f"<pre><code>voltage,key={auth_key},phase=1 value=242.7</code></pre>\n\n"
-                "❗️Звернись за секретним токеном {TOKEN} до @frickua, наразі це відбувається вручну\n\n"
-                "❔Більше інформаціі тут: https://voltagetracking.frick.net.ua", 'HTML')
+
+
+def send_welcome_msg(rows):
+    send_tg_msg(rows[0]['tg_user_id'],
+f"""👋 Привіт! Дякую, за цікавість до проєкту моніторингу напруги в енергосистемі.\n 
+            Цей проєкт дозволить тобі та твоїм сусідам, слідкувати за рівнем напруги у вашій оселі, та попередити аварійні ситуації.\n\n
+            Ти можеш додати бота в кілька своїх груп, і він автоматично надсилатиме одні і ті ж дані в них\n
+            Твої унікальні ключі для надсилання даних:\n
+            {"\n".join(f"- {row['chat_name']}: {row['auth_key']}" for row in rows)}
+            Тепер ти можеш надсилати дані своєї напруги в ситему\n\n
+            Для цього використовуй HTTP POST запит https://metrics_voltagetracking.frick.net.ua/api/v1/push/influx/write\n
+            Обов'язково додай заголовок, для авторизаціі
+            <pre>Authorization: Basic {{TOKEN}}</pre>
+            Тіло запиту(body):
+            <pre><code>voltage,key={rows[0]['auth_key']},phase=1 value=242.7</code></pre>\n\n
+            ❗️Звернись за секретним токеном {{TOKEN}} до @frickua, наразі це відбувається вручну\n\n
+            ❔Більше інформаціі тут: https://voltagetracking.frick.net.ua""", 'HTML')
 
 
 offset = None
@@ -101,11 +105,13 @@ for update in resp["result"]:
     if 'message' in update:
         msg = update['message']
         if 'text' in msg and msg['text'] == '/start':
-            response = supabase.table("tg_channels").select('auth_key', 'tg_user_id').eq("tg_user_id", msg['from']['id']).execute()
-            if response and len(response.data) == 1:
+            response = (supabase.table("tg_channels")
+                        .select('auth_key', 'tg_user_id', 'chat_name')
+                        .eq("tg_user_id", msg['from']['id']).execute())
+            if response and len(response.data) > 0:
                 data = response.data[0]
                 if  data['auth_key'] and data['tg_user_id']:
-                    send_welcome_msg(data['tg_user_id'], data['auth_key'])
+                    send_welcome_msg(response.data)
             else:
                 send_tg_msg(msg['from']['id'],
                             "😔 Вибач, я не знайшов твій канал або групу. Додай мене адміністратором до каналу або групи в якій ти хочеш бачити графіки та сповіщення про напругу.\n"
