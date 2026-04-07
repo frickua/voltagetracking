@@ -101,10 +101,9 @@ for update in resp["result"]:
                      "tg_user_id": chat_member_from['id'],
                      "tg_user_info": f"@{chat_member_from['username']} ({chat_member_from['first_name']})",
                      "auth_key": auth_key}).execute()
+                print(response)
             except APIError as e:
                print(f"ERROR. Can not add channel: {e} ")
-
-            print(response)
 
             send_welcome_msg(chat_member_from['id'])
 
