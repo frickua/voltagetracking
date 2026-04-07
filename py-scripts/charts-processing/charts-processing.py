@@ -53,10 +53,10 @@ def update_chart_tg(msg_id, chat_id, key, caption):
     r = requests.post(url, data=data, files=files)
     print(r.json())
 
-def send_chart_tg(chat_id, key, caption):
+def send_chart_tg(chat_id, key, caption, topic=None):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
     with open(f"{key}.png", 'rb') as f:
-        r = requests.post(url, data={'chat_id': chat_id, 'caption': caption}, files={'photo': f})
+        r = requests.post(url, data={'chat_id': chat_id, 'caption': caption, 'message_thread_id': topic}, files={'photo': f})
     print(r.json())
     msg_id = r.json().get('result', {}).get('message_id')
     return msg_id
@@ -91,7 +91,7 @@ for row in response.data:
         update_chart_tg(row['chart_msg_id'], row['chat_id'], key, caption)
         db_updates.append({"id": row['id'], "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
     else:
-        msg_id = send_chart_tg(row['chat_id'], key, caption)
+        msg_id = send_chart_tg(row['chat_id'], key, caption, row['tg_topic'])
         db_updates.append({"id": row['id'], "chart_msg_id": msg_id, "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
         if row['chart_msg_id'] :
             pin_tg_msg(row['chat_id'], row['chart_msg_id'], True)
