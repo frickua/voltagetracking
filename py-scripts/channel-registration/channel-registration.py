@@ -93,6 +93,9 @@ for update in resp["result"]:
         if new_status in ["administrator", "member"]:
             print(f"✅ Bot added to channel: {chat['title']} ({chat['id']})")
             auth_key = generate_auth_key()
+            response = supabase.table("tg_channels").select('auth_key').eq('tg_user_id', chat_member_from['id']).execute()
+            if response.data and len(response.data) > 0:
+                auth_key = response.data[0]['auth_key']
             try:
                 response = supabase.table("tg_channels").insert(
                     {"chat_id": chat['id'],
