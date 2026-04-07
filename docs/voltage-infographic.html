@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Інфографіка шкідливості напруги</title>
+    <style>
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #e9ecef; padding: 25px; color: #212529; }
+        .container { max-width: 1300px; margin: auto; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); }
+        h2 { text-align: center; margin-bottom: 35px; font-size: 2.2em; font-weight: 800; color: #1a1a1a; text-transform: uppercase; }
+
+        .table-wrapper { overflow-x: auto; border-radius: 10px; border: 2px solid #dee2e6; }
+        table { width: 100%; border-collapse: collapse; min-width: 1100px; table-layout: fixed; }
+
+        /* Кольори заголовків (Повернуто насичені) */
+        th { padding: 22px; text-align: center; color: #fff; font-weight: 700; font-size: 1.1em; border: 1px solid rgba(255,255,255,0.2); }
+        .h-group { background-color: #34495e; width: 220px; text-align: left; font-size: 1.2em; }
+        .h-crit-low {background-color: #f1c40f; color: #000;  } /* Глибокий червоний */
+        .h-low { background-color: #d35400; }      /* Насичений помаранчевий */
+        .h-high { background-color: #c0392b; } /* Яскравий жовтий */
+        .h-emergency { background-color: #8b0000; } /* Аварійний червоний */
+
+        /* Осередки з посиленим кольором та шрифтом */
+        td { padding: 20px; border: 1px solid #dee2e6; vertical-align: top; font-size: 1.05em; line-height: 1.5; font-weight: 500; }
+
+        .bg-critical { background-color: #ffcccc !important; color: #800000; } /* Чіткий червоний фон */
+        .bg-warning { background-color: #ffe4b5 !important; color: #856404; }  /* Чіткий помаранчевий фон */
+        .bg-normal { background-color: #fff9c4 !important; color: #665c00; }   /* Чіткий жовтий фон */
+        .bg-safe { background-color: #d4edda !important; color: #155724; }     /* Чіткий зелений фон */
+
+        .group-name { font-weight: 800; font-size: 1.25em; color: #2c3e50; display: block; margin-bottom: 5px; }
+        .sub-text { font-size: 0.85em; color: #5a6268; font-weight: 400; }
+
+        .status-label { font-weight: 900; text-transform: uppercase; font-size: 0.85em; display: block; margin-bottom: 8px; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 3px; }
+
+        .footer-info { margin-top: 30px; padding: 25px; background: #343a40; color: white; border-radius: 10px; font-size: 1.1em; text-align: center; }
+        .footer-info b { color: #f1c40f; font-size: 1.2em; }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            th, td { padding: 12px; font-size: 0.95em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📊 Безпека електроприладів в залежності від напруги</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th class="h-group">Група техніки</th>
+                <th class="h-crit-low">Крит. низька<br> < 180V</th>
+                <th class="h-low">Понижена<br> 180V - 200V</th>
+                <th class="h-high">Висока<br> 250V - 260V</th>
+                <th class="h-emergency">Аварійна<br> > 260V</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Котли -->
+            <tr>
+                <td style="background: #f8f9fa;"><span class="group-name">🔥 Котли</span><span class="sub-text">Плата керування + Насос</span></td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Насос стоїть, система закипає. Ризик аварії котла.</td>
+                <td class="bg-warning"><span class="status-label">РИЗИК</span>Збої автоматики, помилки розпалу полум'я.</td>
+                <td class="bg-critical"><span class="status-label">НЕБЕЗПЕЧНО</span>Висока ймовірність пробою компонентів плати.</td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Миттєве вигоряння «мізків» котла.</td>
+            </tr>
+            <!-- Холодильники -->
+            <tr>
+                <td style="background: #f8f9fa;"><span class="group-name">❄️ Холодильники</span><span class="sub-text">Компресорні прилади</span></td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Компресор гуде, не стартує і згоряє від перегріву.</td>
+                <td class="bg-warning"><span class="status-label">ШКІДЛИВО</span>Складний запуск, швидке зношування двигуна.</td>
+                <td class="bg-warning"><span class="status-label">РИЗИК</span>Перегрів обмоток, вихід з ладу пускового реле.</td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Згоряння двигуна. Ремонт коштує як новий прилад.</td>
+            </tr>
+            <!-- Електроніка -->
+            <tr>
+                <td style="background: #f8f9fa;"><span class="group-name">💻 Електроніка</span><span class="sub-text">ТВ, ПК, Зарядні пристрої</span></td>
+                <td class="bg-safe"><span class="status-label">БЕЗПЕЧНО</span>Працюють без проблем (імпульсні блоки живлення).</td>
+                <td class="bg-safe"><span class="status-label">ОК</span>Штатний режим. Техніка не відчуває перепаду.</td>
+                <td class="bg-warning"><span class="status-label">РИЗИК</span>Надмірний нагрів блоку живлення.</td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Вибух конденсаторів, вихід приладу з ладу.</td>
+            </tr>
+            <!-- Пральні машини -->
+            <tr>
+                <td style="background: #f8f9fa;"><span class="group-name">🧼 Пральні маш.</span><span class="sub-text">Двигун + Силовий модуль</span></td>
+                <td class="bg-critical"><span class="status-label">АВАРІЯ</span>Двигун не тягне барабан, ТЕН гріє дуже слабко.</td>
+                <td class="bg-warning"><span class="status-label">ЗБОЇ</span>Помилки програми, зупинка посеред циклу.</td>
+                <td class="bg-warning"><span class="status-label">НЕБЕЗПЕЧНО</span>Вихід з ладу плат індикації та управління.</td>
+                <td class="bg-critical"><span class="status-label">КРИТИЧНО</span>Згоряння головного модуля (силової частини).</td>
+            </tr>
+            <!-- Бойлери -->
+            <tr>
+                <td style="background: #f8f9fa;"><span class="group-name">☕ Бойлери</span><span class="sub-text">ТЕНи / Нагрівачі</span></td>
+                <td class="bg-safe"><span class="status-label">БЕЗПЕЧНО</span>Нагрів води триває у 3-4 рази довше.</td>
+                <td class="bg-safe"><span class="status-label">БЕЗПЕЧНО</span>Повільний нагрів без шкоди для ТЕНу.</td>
+                <td class="bg-safe"><span class="status-label">ОК</span>Гріють швидше (для ТЕНу безпечно).</td>
+                <td class="bg-warning"><span class="status-label">РИЗИК</span>Прискорений знос ізоляції нагрівача.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-info">
+        ⚙️ Рекомендовані налаштування Реле Напруги: <b>190V — 248V</b> &nbsp; | &nbsp; Затримка пуску: <b>300 сек.</b><br>
+        💬 Для холодильників і котлів варто встановити стабілізатор &nbsp; | &nbsp; Звертайте увагу на межі стабілізаціі <b>120В - 280В</b> та затримку <b>>300сек</b>
+    </div>
+</div>
+
+</body>
+</html>
