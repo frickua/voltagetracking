@@ -19,8 +19,8 @@ def update_fingerprints(fingerprints):
     # Delete rows older than 5 hours
     supabase.table("alerts-fingerprints").delete().lt("created_at", old_fingerprints_ts.isoformat()).execute()
     if len(fingerprints) > 0:
-        data = [{"fingerprint": v} for v in fingerprints]
-        supabase.table("alerts-fingerprints").upsert(data, on_conflict="fingerprint").execute()
+        data = [{"fingerprint": k, "status": v} for k, v in fingerprints.items()]
+        supabase.table("alerts-fingerprints").upsert(data, on_conflict="fingerprint,status").execute()
 
 def send_tg_msg(chat_id, topic=None, txt=None, parse_mode='TEXT'):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -43,8 +43,8 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 response = supabase.table("tg_channels").select('auth_key', 'chat_id', 'tg_topic').execute()
 keys_to_channels = {row["auth_key"]: {"chat_id": row["chat_id"], "topic": row['tg_topic']} for row in response.data}
 
-response = supabase.table("alerts-fingerprints").select('fingerprint').execute()
-fingerprints = {row["fingerprint"] for row in response.data}
+response = supabase.table("alerts-fingerprints").select('fingerprint', 'status').execute()
+fingerprints = {row["fingerprint"]: row["status"] for row in response.data}
 
 for alert in alerts:
     status = alert['status']
@@ -57,7 +57,7 @@ for alert in alerts:
     info_link = "<i>\n<blockquote expandable>📌Попередження - інформативне, ваша оселя може бути підключена до іншої фази або навіть до іншої підстанціі.\nСприймайте це сповіщення як погоду - загальну картину стану енергоситеми зараз.\nДля надійного захисту використовуйте <b>реле напруги</b> та <b>стабілізатори</b><a href=\"https://voltagetracking.frick.net.ua/voltage-infographic.html?v=1\">.</a></blockquote></i>"
     if status == 'firing':
         if fingerprint not in fingerprints: # Verify that alert already processed
-            fingerprints.add(fingerprint)
+            fingerprints[fingerprint] = status # Add new fingerprint
             if channel:
                 txt = ""
                 if value > 230:
@@ -68,8 +68,8 @@ for alert in alerts:
             else:
                 print(f"Channel not found {key} {fingerprint}")
     elif status == 'resolved':
-        if fingerprint not in fingerprints:
-            fingerprints.add(fingerprint)
+        if fingerprint not in fingerprints or fingerprints[fingerprint] != 'resolved':
+            fingerprints[fingerprint] = status
             send_tg_msg(channel['chat_id'], channel['topic'], f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}", 'HTML')
     else:
         print(f"Unknown status: {status}")
