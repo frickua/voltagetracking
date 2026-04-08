@@ -73,13 +73,13 @@ for alert in alerts:
                     txt = "🔺 Підвищена "
                 else:
                     txt = "🔻 Знижена "
-                send_tg_msg(channels, f"{txt} напруга: {value} Вольт\nФаза: {phase}\n\n{info_link}", 'HTML')
+                send_tg_msg(channels, f"{txt} напруга: {value} Вольт\nФаза: {phase}\n\n{info_link}\n#voltage #voltage_alerts #voltage_alerts_firing", 'HTML')
             else:
                 print(f"Channel not found {key} {fingerprint}")
     elif status == 'resolved':
         if fingerprint not in fingerprints or fingerprints[fingerprint] != 'resolved':
             fingerprints[fingerprint] = status
-            send_tg_msg(channels, f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}", 'HTML')
+            send_tg_msg(channels, f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}#voltage #voltage_alerts #voltage_alerts_resolved", 'HTML')
     else:
         print(f"Unknown status: {status}")
 
