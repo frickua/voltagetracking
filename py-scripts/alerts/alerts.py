@@ -76,10 +76,14 @@ for alert in alerts:
                 send_tg_msgs(channels, f"{txt} напруга: {value} Вольт\nФаза: {phase}\n\n{info_link}\n#voltage #voltage_alerts #voltage_alerts_firing", 'HTML')
             else:
                 print(f"Channel not found {key} {fingerprint}")
+        else:
+            print(f"Fingerprint skipped: {fingerprints[fingerprint]}")
     elif status == 'resolved':
         if fingerprint not in fingerprints or fingerprints[fingerprint] != 'resolved':
             fingerprints[fingerprint] = status
             send_tg_msgs(channels, f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}#voltage #voltage_alerts #voltage_alerts_resolved", 'HTML')
+        else:
+            print(f"Fingerprint skipped: {fingerprints[fingerprint]}")
     else:
         print(f"Unknown status: {status}")
 
