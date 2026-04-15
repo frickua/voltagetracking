@@ -24,7 +24,7 @@ def update_fingerprints(fingerprints):
 
 def send_tg_msgs(chats, txt, parse_mode='TEXT'):
     for chat in chats:
-        send_tg_msg(chat['chat_id'], chat['tg_topic'], txt, parse_mode)
+        send_tg_msg(chat['chat_id'], chat['topic'], txt, parse_mode)
 
 def send_tg_msg(chat_id, topic=None, txt=None, parse_mode='TEXT'):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -73,13 +73,13 @@ for alert in alerts:
                     txt = "🔺 Підвищена "
                 else:
                     txt = "🔻 Знижена "
-                send_tg_msg(channels, f"{txt} напруга: {value} Вольт\nФаза: {phase}\n\n{info_link}\n#voltage #voltage_alerts #voltage_alerts_firing", 'HTML')
+                send_tg_msgs(channels, f"{txt} напруга: {value} Вольт\nФаза: {phase}\n\n{info_link}\n#voltage #voltage_alerts #voltage_alerts_firing", 'HTML')
             else:
                 print(f"Channel not found {key} {fingerprint}")
     elif status == 'resolved':
         if fingerprint not in fingerprints or fingerprints[fingerprint] != 'resolved':
             fingerprints[fingerprint] = status
-            send_tg_msg(channels, f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}#voltage #voltage_alerts #voltage_alerts_resolved", 'HTML')
+            send_tg_msgs(channels, f"✅ Напруга стабілізувалась: {value} Вольт\nФаза: {phase}\n\n{info_link}#voltage #voltage_alerts #voltage_alerts_resolved", 'HTML')
     else:
         print(f"Unknown status: {status}")
 
