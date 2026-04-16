@@ -54,7 +54,7 @@ for row in response.data:
 
 response = supabase.table("alerts-fingerprints").select('fingerprint', 'status').execute()
 fingerprints = {row["fingerprint"]: row["status"] for row in response.data}
-
+print(f"Old fingerprints: {fingerprints}")
 for alert in alerts:
     status = alert['status']
     value = alert['values']['A']
