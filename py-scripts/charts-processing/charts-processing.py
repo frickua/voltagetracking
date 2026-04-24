@@ -89,7 +89,9 @@ for row in response.data:
     msg_updated = parse_db_timestamp(row['chart_msg_updated'])
     if row['chart_msg_id'] and msg_updated and msg_updated.date() == date.today():
         update_chart_tg(row['chart_msg_id'], row['chat_id'], key, caption)
-        db_updates.append({"id": row['id'], "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
+        # Should send old value of msg_id
+        # If some rows will have msg=null update other unspecified updates clear old values so they should provide old value
+        db_updates.append({"id": row['id'], "chart_msg_id": row['chart_msg_id'], "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
     else:
         msg_id = send_chart_tg(row['chat_id'], key, caption, row['tg_topic'])
         db_updates.append({"id": row['id'], "chart_msg_id": msg_id, "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
