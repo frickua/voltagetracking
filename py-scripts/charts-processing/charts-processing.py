@@ -94,10 +94,14 @@ for row in response.data:
         db_updates.append({"id": row['id'], "chart_msg_id": row['chart_msg_id'], "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
     else:
         msg_id = send_chart_tg(row['chat_id'], key, caption, row['tg_topic'])
-        db_updates.append({"id": row['id'], "chart_msg_id": msg_id, "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
-        if row['chart_msg_id'] :
-            pin_tg_msg(row['chat_id'], row['chart_msg_id'], True)
-        pin_tg_msg(row['chat_id'], msg_id)
+        if msg_id:
+            db_updates.append({"id": row['id'], "chart_msg_id": msg_id, "chart_msg_updated": datetime.now(tz.tzlocal()).isoformat()})
+            if row['chart_msg_id'] :
+                # Unpin old
+                pin_tg_msg(row['chat_id'], row['chart_msg_id'], True)
+            pin_tg_msg(row['chat_id'], msg_id)
+        else:
+            print("Failed to send tg message")
 
 print(db_updates)
 resp = supabase.table("tg_channels").upsert(db_updates, on_conflict="id").execute()
